@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -28,22 +29,26 @@ public class GrammarController {
     }
 
     @PostMapping("/uploadFile")
-    public ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile file){
+    public ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile file) throws IOException {
         /* logic for uploading file
-        1. read the file
-        2. grammar check the file
-        3. save the file */
+        1. save the file
+        2. read the file
+        3. grammar check the file
+        4.  write corrected file */
+
         storageService.store(file);
         Path uploadedFile = storageService.load(file.getOriginalFilename());
         logger.debug("absolute path: {} ", uploadedFile );
-        checkerService.readFile(uploadedFile);
-        return ResponseEntity.status(HttpStatus.OK).body(file.getOriginalFilename() + " has been uploaded successfully." );
+        List<String> fileLines = checkerService.readFile(uploadedFile);
+        String correctedLines = checkerService.checkText(fileLines);
+        checkerService.writeFile(correctedLines);
+        return ResponseEntity.status(HttpStatus.OK).body("file has been corrected");
     }
 
     @PostMapping("/grammar-check")
-    public ResponseEntity<String> checkGrammar(@RequestBody String text) throws IOException {
-        logger.debug(text);
-        checkerService.checkText(text);
-        return ResponseEntity.status(HttpStatus.OK).body("you request was successful. please see logs");
+    public String checkGrammar(@RequestBody Text text) throws IOException {
+        logger.debug(text.getText());
+        return null ;  //checkerService.checkText(text.getText());
+
     }
 }
