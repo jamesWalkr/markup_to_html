@@ -16,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 @Service
 public class FileSystemStorageService implements StorageService {
@@ -60,16 +62,29 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Stream<Path> loadAll() {
-        try{
-            return Files.walk(this.rootLocation,1)
-                    .filter(path -> !path.equals(this.rootLocation))
-                    .map(this.rootLocation::relativize);
-        }
-        catch (IOException e){
+    public Set<String> loadAll(){
+        try (Stream<Path> stream = Files.walk(this.rootLocation,1)){
+            return stream
+                    .filter(file -> !Files.isDirectory(file))
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .collect(Collectors.toSet());
+        }catch (IOException e){
             throw  new StorageException("Failed to read stored files");
         }
     }
+
+//    @Override
+//    public Stream<Path> loadAll() {
+//        try{
+//            return Files.walk(this.rootLocation,1)
+//                    .filter(path -> !path.equals(this.rootLocation))
+//                    .map(this.rootLocation::relativize);
+//        }
+//        catch (IOException e){
+//            throw  new StorageException("Failed to read stored files");
+//        }
+//    }
 
     @Override
     public Path load(String fileName) {

@@ -1,19 +1,19 @@
 package com.example.controllers;
 
-import com.example.models.Text;
+// import com.example.models.Text;
 import com.example.service.GrammarCheckerService;
 import com.example.service.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -45,10 +45,16 @@ public class GrammarController {
         return ResponseEntity.status(HttpStatus.OK).body("file has been corrected");
     }
 
-    @PostMapping("/grammar-check")
-    public String checkGrammar(@RequestBody Text text) throws IOException {
-        logger.debug(text.getText());
-        return null ;  //checkerService.checkText(text.getText());
+    @GetMapping("/uploaded-files")
+    public ResponseEntity<Set<String>> listUploadedFiles(){
+        return ResponseEntity.status(HttpStatus.OK).body(storageService.loadAll());
 
     }
+
+//    @PostMapping("/grammar-check")
+//    public String checkGrammar(@RequestBody Text text) throws IOException {
+//        logger.debug(text.getText());
+//        return null ;  //checkerService.checkText(text.getText());
+//
+//    }
 }
