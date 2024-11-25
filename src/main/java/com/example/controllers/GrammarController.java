@@ -2,6 +2,7 @@ package com.example.controllers;
 
 // import com.example.models.Text;
 import com.example.service.GrammarCheckerService;
+import com.example.service.MarkdownHtmlConvertorService;
 import com.example.service.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,12 @@ public class GrammarController {
     private final Logger logger = LoggerFactory.getLogger(GrammarController.class);
     private final GrammarCheckerService checkerService;
     private  final StorageService storageService;
+    private final MarkdownHtmlConvertorService htmlConvertorService;
 
-    public GrammarController(GrammarCheckerService checkerService, StorageService storageService) {
+    public GrammarController(GrammarCheckerService checkerService, StorageService storageService, MarkdownHtmlConvertorService htmlConvertorService) {
         this.checkerService = checkerService;
         this.storageService = storageService;
+        this.htmlConvertorService = htmlConvertorService;
     }
 
     @PostMapping("/uploadFile")
@@ -49,6 +52,12 @@ public class GrammarController {
     public ResponseEntity<Set<String>> listUploadedFiles(){
         return ResponseEntity.status(HttpStatus.OK).body(storageService.loadAll());
 
+    }
+
+    @GetMapping("/get-html")
+    public ResponseEntity<String> getHtml(){
+        htmlConvertorService.convertMarkdownFileToHtmlFile();
+        return ResponseEntity.status(HttpStatus.OK).body("Html file has been created");
     }
 
 //    @PostMapping("/grammar-check")

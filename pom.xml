@@ -51,6 +51,12 @@
 			<artifactId>language-en</artifactId>
 			<version>6.5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>0.24.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
